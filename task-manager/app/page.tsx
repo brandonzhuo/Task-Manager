@@ -10,7 +10,6 @@ export default function Home() {
         <title>lmfaoooooooooo</title>
       </Head>
       <h1>Welcome to my test!</h1>
-      <Link href="/about">about</Link>
     </div>
   );
 }
