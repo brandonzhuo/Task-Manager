@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "react-beautiful-dnd-next": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.8"
+  }
+}

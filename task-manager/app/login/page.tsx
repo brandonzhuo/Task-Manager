@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface LoginResponse {
   token?: string;
@@ -12,6 +13,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();  // Hook for navigation in Next.js
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +34,8 @@ const LoginPage = () => {
       if (res.ok) {
         // Assuming the response contains a token
         alert('Login successful! Token: ' + data.token);
+        // Redirect to another route after successful login
+        router.push('/dashboard'); // Redirect to the dashboard or any route
       } else {
         // Handle error response from server
         setError(data.error || 'An unknown error occurred');
