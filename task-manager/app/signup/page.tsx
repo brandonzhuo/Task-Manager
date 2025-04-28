@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface SignupResponse {
   token?: string;
@@ -12,86 +13,102 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); // Reset error on submit
+    setError(null);
+    setIsLoading(true);
 
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         body: JSON.stringify({ name, email, password }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
       const data: SignupResponse = await res.json();
 
       if (res.ok) {
-        alert('Signup successful! Token: ' + data.token);
+        alert('Signup successful!');
+        router.push('/login');
       } else {
-        // In case of failure, display error message from the response
         setError(data.error || 'An unknown error occurred');
       }
     } catch (error) {
-      // Network or server error
-      setError('Signup failed: Unable to connect to the server.');
+      setError('Signup failed: Unable to connect to server.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-center mb-6 text-black">Sign Up</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-4xl font-bold text-center mb-6 text-purple-700">Sign Up</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-black mb-2">Name</label>
+            <label htmlFor="name" className="block mb-1 font-medium text-gray-700">Name</label>
             <input
-              type="text"
               id="name"
-              placeholder="Name"
+              type="text"
+              placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 w-full text-lg text-black placeholder-gray-500"
               required
+              className="w-full p-3 border border-gray-300 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-black mb-2">Email</label>
+            <label htmlFor="email" className="block mb-1 font-medium text-gray-700">Email</label>
             <input
-              type="email"
               id="email"
-              placeholder="Email"
+              type="email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 w-full text-lg text-black placeholder-gray-500"
               required
+              className="w-full p-3 border border-gray-300 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-black mb-2">Password</label>
+            <label htmlFor="password" className="block mb-1 font-medium text-gray-700">Password</label>
             <input
-              type="password"
               id="password"
-              placeholder="Password"
+              type="password"
+              placeholder="Create a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 w-full text-lg text-black placeholder-gray-500"
               required
+              className="w-full p-3 border border-gray-300 rounded-md text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
             />
           </div>
 
           <button
             type="submit"
-            className="mt-4 p-3 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 transition duration-200 w-full"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white py-3 rounded-md hover:opacity-90 transition font-semibold shadow-md"
           >
-            Sign Up
+            {isLoading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+
+        {error && (
+          <p className="text-red-500 text-center text-sm mt-4">{error}</p>
+        )}
+
+        {/* Link to login */}
+        <div className="text-center mt-6">
+          <button
+            onClick={() => router.push('/login')}
+            className="text-purple-700 font-semibold hover:underline text-sm"
+          >
+            Already have an account? Log in
+          </button>
+        </div>
       </div>
     </div>
   );
