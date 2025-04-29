@@ -17,10 +17,13 @@ interface DecodedToken {
 }
 
 const KanbanBoard: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>(); // Access to the Redux dispatch() function:
   const tasks = useSelector((state: RootState) => state.tasks); // Get tasks state from Redux
   const router = useRouter();
-  const [userId, setUserId] = useState<number | null>(null);
+  // React state hook
+  // userId: State variable	Holds the current value (in this case, a user ID or null)
+  // setUserId: Setter function	Lets you update the value of userId later
+  const [userId, setUserId] = useState<number | null>(null); 
 
   // ------------------------
   // Step 1. Get user ID from JWT Token
@@ -56,6 +59,7 @@ const KanbanBoard: React.FC = () => {
         if (!res.ok) throw new Error('Failed to fetch tasks');
   
         // 3. Convert server response (JSON) into JS array
+        // This reads the response body, then decodes it as JSON format, and converts it into normal JavaScript (an array of task objects).
         const dbTasks = await res.json();
   
         // 4. Prepare empty initial structure for Redux
@@ -79,6 +83,9 @@ const KanbanBoard: React.FC = () => {
         });
   
         // 7. Save the final grouped tasks into Redux store
+        // dispatch is a function to call when you want to tell Redux to change the state.
+        // setTasks(...) is an action creator and dispatch(...) sends this action to the Redux reducer.
+        // Then the reducer in tasksSlice.ts (inside setTasks) sees the action and updates the tasks state.
         dispatch(setTasks(initialTasks)); 
   
       } catch (err) {
@@ -97,7 +104,7 @@ const KanbanBoard: React.FC = () => {
   const handleOnDragEnd = async (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return; // Dropped outside list
-    if (source.droppableId === destination.droppableId && source.index === destination.index) return; // Same spot
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return; // Same spot, do nothing (no need to update).
 
     const sourceCol = source.droppableId as ColumnId;
     const destCol = destination.droppableId as ColumnId;

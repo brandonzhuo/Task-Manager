@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 // Frontend sends: POST /api/tasks with JSON body { title, description, dueDate, status }
 // Backend reads token from cookie
 // Token is valid → insert into DB
-//  Respond with: 201 + created task
+// Respond with: 201 + created task
 // -------------------------------
 export async function POST(request: Request) {
   try {
