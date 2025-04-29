@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export type Task = {
   id: string;
   content: string;
+  description?: string;
 };
 
 export type TasksState = {
@@ -40,10 +41,24 @@ const tasksSlice = createSlice({
       state.todo = action.payload.todo;
       state.inProgress = action.payload.inProgress;
       state.done = action.payload.done;
-    },    
+    },
+    updateTaskContent: (
+      state,
+      action: PayloadAction<{ columnId: ColumnId; taskId: string; newContent?: string; newDescription?: string }>
+    ) => {
+      const task = state[action.payload.columnId].find(t => t.id === action.payload.taskId);
+      if (task) {
+        if (action.payload.newContent !== undefined) {
+          task.content = action.payload.newContent;
+        }
+        if (action.payload.newDescription !== undefined) {
+          task.description = action.payload.newDescription;
+        }
+      }
+    },
   },
 });
 
 
-export const { addTask, removeTask, moveTask, setTasks } = tasksSlice.actions;
+export const { addTask, removeTask, moveTask, setTasks, updateTaskContent } = tasksSlice.actions;
 export default tasksSlice.reducer;
